@@ -64,6 +64,9 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.KING) {
             return new KingMoveCalculator().pieceMoves(board,myPosition);
         }
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+            return new KnightMoveCalculator().pieceMoves(board,myPosition);
+        }
 
         return List.of();
     }
@@ -197,6 +200,36 @@ class QueenMoveCalculator implements moveCalculator {
 class KingMoveCalculator implements moveCalculator {
     private final int[][] directions = {
             {1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}
+    };
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        for (int[] dir : directions) {
+            int i = dir[0];
+            int j = dir[1];
+
+            int x = myPosition.getColumn() + i;
+            int y = myPosition.getRow() + j;
+
+            if (x>0 && y>0 && x<=8 && y<=8 ) {
+
+                ChessPosition position = new ChessPosition(y,x);
+                if (board.getPiece(position) == null) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                } else if (board.getPiece(position).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                }
+            }
+        }
+        return moves;
+    }
+}
+
+class KnightMoveCalculator implements moveCalculator {
+    private final int[][] directions = {
+            {2,1},{2,-1},{-2,1},{-2,-1},{1,2},{1,-2},{-1,2},{-1,-2}
     };
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
