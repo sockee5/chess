@@ -1,8 +1,6 @@
 package chess;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -54,6 +52,9 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
+        if (piece.getPieceType() == PieceType.ROOK) {
+            return new RookMoveCalculator().pieceMoves(board,myPosition);
+        }
 
         return List.of();
     }
@@ -69,5 +70,68 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
+    }
+}
+
+interface moveCalculator {
+        Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
+}
+
+/*
+class BishopMoveCalculator implements moveCalculator {
+    private final int[][] directions = {
+            {1,1},{1,-1},{1,-1},{-1,-1}
+    };
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+        boolean hitEdge = false;
+        boolean hitPiece = false;
+
+        List<Integer> directions = new List<>;
+
+        while (!hitEdge) {
+
+        }
+        if (board.getPiece() ==) {
+
+        }
+    }
+}
+*/
+
+class RookMoveCalculator implements moveCalculator {
+    private final int[][] directions = {
+            {1,0},{-1,0},{0,1},{0,-1}
+    };
+
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        for (int[] dir : directions) {
+            int i = dir[0];
+            int j = dir[1];
+
+            int x = myPosition.getColumn() + i;
+            int y = myPosition.getRow() + j;
+
+            while (x>0 && y>0 && x<=8 && y<=8 ) {
+
+                ChessPosition position = new ChessPosition(y,x);
+                if (board.getPiece(position) == null) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                } else if (board.getPiece(position).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, position, null));
+                    break;
+                } else {
+                    break;
+                }
+                x +=i;
+                y+=j;
+            }
+        }
+        return moves;
     }
 }
