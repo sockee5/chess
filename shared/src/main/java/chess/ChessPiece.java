@@ -67,6 +67,9 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.KNIGHT) {
             return new KnightMoveCalculator().pieceMoves(board,myPosition);
         }
+        if (piece.getPieceType() == PieceType.PAWN) {
+            return new PawnMoveCalculator().pieceMoves(board,myPosition);
+        }
 
         return List.of();
     }
@@ -254,5 +257,71 @@ class KnightMoveCalculator implements moveCalculator {
             }
         }
         return moves;
+    }
+}
+
+class PawnMoveCalculator implements moveCalculator {
+
+    public Collection<ChessMove> addMoves(ChessPosition myPosition, ChessPosition endPosition) {
+        Collection<ChessMove> addedMoves = new ArrayList<>();
+        if (endPosition.getRow() == 1 || endPosition.getRow() ==8) {
+            addedMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.BISHOP));
+            addedMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.ROOK));
+            addedMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.QUEEN));
+            addedMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+        } else {
+            addedMoves.add(new ChessMove(myPosition, endPosition, null));
+        }
+        return addedMoves;
+    }
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+        Collection<ChessMove> moves = new ArrayList<>();
+        ChessPiece myPiece = board.getPiece(myPosition);
+        int j;
+        int startRow = myPosition.getRow();
+
+        if (myPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            j = -1;
+        } else {
+            j = 1;
+        }
+
+        int x = myPosition.getColumn();
+        int y = startRow + j;
+
+        // Out of bounds
+        if (y<1 || y>8 ) return moves;
+
+        // Move one
+        ChessPosition position = new ChessPosition(y,x);
+        if (board.getPiece(position) == null) {
+            moves.addAll(addMoves(myPosition,position));
+
+
+
+
+            // pawn is in starting location
+            if ((myPiece.getTeamColor() == ChessGame.TeamColor.BLACK && startRow == 7) || (myPiece.getTeamColor() == ChessGame.TeamColor.WHITE && startRow == 2)) {
+                position = new ChessPosition(y+j,x);
+                if (board.getPiece(position) == null) {
+                    moves.addAll(addMoves(myPosition,position));
+                }
+            }
+        }
+        // Check for enemy pieces
+        if (x-1>0) {
+            position = new ChessPosition(y,x-1);
+            if (board.getPiece(position) != null && board.getPiece(position).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                moves.addAll(addMoves(myPosition,position));
+            }
+        }
+        if (x+1<9) {
+            position = new ChessPosition(y,x+1);
+            if (board.getPiece(position) != null && board.getPiece(position).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                moves.addAll(addMoves(myPosition,position));
+            }
+        }
+    return moves;
     }
 }
