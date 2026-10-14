@@ -37,6 +37,15 @@ public class ChessBoard {
         }
     }
 
+    public void movePiece(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece piece = getPiece(startPosition);
+
+        this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+        this.addPiece(endPosition, piece);
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *
@@ -123,6 +132,19 @@ public class ChessBoard {
             }
         }
         return totalMoves;
+    }
+
+    public ChessBoard(ChessBoard other) {
+        this.board = new ChessPiece[8][8];
+        for (int row=0; row<8; row++) {
+            for (int col=0; col<8; col++) {
+                ChessPiece piece = other.board[row][col];
+                if (piece!=null) {
+                    this.board[row][col] = new ChessPiece(piece.getTeamColor(),piece.getPieceType());
+                }
+            }
+        }
+            this.findKingPositions();
     }
 
 

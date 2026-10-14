@@ -54,13 +54,23 @@ public class ChessGame {
         if (piece==null) {
             return null;
         }
-        if (piece.getPieceType().equals(ChessPiece.PieceType.KING)) {
+        Collection<ChessMove> moves = piece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> validMoveList = new ArrayList<>();
 
+        ChessBoard originBoard = this.gameBoard;
+
+        for (ChessMove move : moves) {
+            // Copy Board and check against King in Check
+
+            this.gameBoard = new ChessBoard(originBoard);;
+            gameBoard.movePiece(move);
+            if (!isInCheck(piece.getTeamColor())) {
+                validMoveList.add(move);
+            }
         }
 
-        Collection<ChessMove> moves = new ArrayList<>();
-
-        return moves;
+        this.gameBoard = originBoard;
+        return validMoveList;
     }
 
     /**
