@@ -43,6 +43,9 @@ public class ChessBoard {
         ChessPiece piece = getPiece(startPosition);
 
         this.board[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+        if (move.getPromotionPiece()!=null) { // if promotion piece is not null, set new location to new piece
+            piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+        }
         this.addPiece(endPosition, piece);
     }
 

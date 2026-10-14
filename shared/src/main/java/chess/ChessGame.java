@@ -82,11 +82,20 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition position = move.getStartPosition();
         ChessPiece piece = gameBoard.getPiece(position);
+        if (piece==null) {
+            throw new InvalidMoveException("No piece at location");
+        }
         Collection<ChessMove> validMoveList = validMoves(position);
         if (TeamTurn==piece.getTeamColor() && validMoveList.contains(move)) {
+            gameBoard.movePiece(move);
+            changeTurn();
             return;
         }
         throw new InvalidMoveException("Illegal Move");
+    }
+
+    private void changeTurn() {
+        TeamTurn = (TeamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
