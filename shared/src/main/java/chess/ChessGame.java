@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -13,7 +14,7 @@ public class ChessGame {
     private ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
-
+        gameBoard.resetBoard();
     }
 
     /**
@@ -68,7 +69,15 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = gameBoard.getKingPosition(teamColor);
+        TeamColor enemyColor = (teamColor==TeamColor.BLACK) ? TeamColor.WHITE : TeamColor.BLACK;
+        Collection<ChessMove> enemyMoves = gameBoard.teamMoves(enemyColor); // call function for getting moves of pieces. I can change it from being just locations to adding moves.
+        for (ChessMove move : enemyMoves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -90,6 +99,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+
     }
 
     /**
@@ -99,7 +109,9 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         gameBoard = board;
+        gameBoard.findKingPositions();
     }
+
 
     /**
      * Gets the current chessboard
@@ -108,5 +120,20 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return TeamTurn == chessGame.TeamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(TeamTurn, gameBoard);
     }
 }

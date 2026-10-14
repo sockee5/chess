@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPosition whiteKingPosition;
+    private ChessPosition blackKingPosition;
 
     public ChessBoard() {
         
@@ -24,6 +28,13 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         this.board[position.getRow()-1][position.getColumn()-1] = piece;
+        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+            if (piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
+                whiteKingPosition = position;
+            } else {
+                blackKingPosition = position;
+            }
+        }
     }
 
     /**
@@ -70,6 +81,48 @@ public class ChessBoard {
         for (int x=1; x<=8; x++) {
             addPiece(new ChessPosition(7, x), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
+    }
+
+    public void findKingPositions() {
+        for (int row=0; row<8; row++) {
+            for (int col=0; col<8; col++) {
+                if (board[row][col]!=null) {
+                    chess.ChessPiece piece = board[row][col];
+                    if (piece.getPieceType()== ChessPiece.PieceType.KING) {
+                        ChessPosition position = new ChessPosition(row+1,col+1);
+                        if (piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
+                            whiteKingPosition = position;
+                        } else {
+                            blackKingPosition = position;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public ChessPosition getKingPosition(ChessGame.TeamColor color) {
+        if (color== ChessGame.TeamColor.WHITE) {
+            return whiteKingPosition;
+        } else {
+            return blackKingPosition;
+        }
+    }
+
+    public Collection<ChessMove> teamMoves(ChessGame.TeamColor color) {
+        Collection<ChessMove> totalMoves = new ArrayList<>();
+        for (int row=0; row<8; row++) {
+            for (int col=0; col<8; col++) {
+                ChessPiece piece = board[row][col];
+                if (piece!=null) {
+
+                    if (piece.getTeamColor()==color) {
+                        totalMoves.addAll(piece.pieceMoves(this, new ChessPosition(row+1,col+1)));
+                    }
+                }
+            }
+        }
+        return totalMoves;
     }
 
 
