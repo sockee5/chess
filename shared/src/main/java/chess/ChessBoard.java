@@ -17,7 +17,7 @@ public class ChessBoard {
     private ChessPosition blackKingPosition;
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -123,18 +123,30 @@ public class ChessBoard {
 
     public Collection<ChessMove> teamMoves(ChessGame.TeamColor color) {
         Collection<ChessMove> totalMoves = new ArrayList<>();
+        Collection<ChessPosition> allTeamPositions = teamPositions(color);
+        for (ChessPosition position : allTeamPositions) {
+            ChessPiece piece = getPiece(position);
+            if (piece.getTeamColor()==color) {
+                totalMoves.addAll(piece.pieceMoves(this, position));
+            }
+        }
+
+        return totalMoves;
+    }
+
+    public Collection<ChessPosition> teamPositions(ChessGame.TeamColor color) {
+        Collection<ChessPosition> allTeamPositions = new ArrayList<>();
         for (int row=0; row<8; row++) {
             for (int col=0; col<8; col++) {
                 ChessPiece piece = board[row][col];
                 if (piece!=null) {
-
                     if (piece.getTeamColor()==color) {
-                        totalMoves.addAll(piece.pieceMoves(this, new ChessPosition(row+1,col+1)));
+                        allTeamPositions.add(new ChessPosition(row+1,col+1));
                     }
                 }
             }
         }
-        return totalMoves;
+        return allTeamPositions;
     }
 
     public ChessBoard(ChessBoard other) {
