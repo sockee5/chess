@@ -1,7 +1,6 @@
-package chess.MoveCalculators;
+package chess.movecalculators;
 
 import chess.*;
-import com.sun.source.tree.WhileLoopTree;
 
 import java.util.ArrayList;
 import java.util.Collection;
