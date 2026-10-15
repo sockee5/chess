@@ -28,6 +28,9 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         this.board[position.getRow()-1][position.getColumn()-1] = piece;
+        if (piece==null) {
+            return;
+        }
         if (piece.getPieceType() == ChessPiece.PieceType.KING) {
             if (piece.getTeamColor()== ChessGame.TeamColor.WHITE) {
                 whiteKingPosition = position;
