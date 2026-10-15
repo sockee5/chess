@@ -11,7 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private TeamColor TeamTurn = TeamColor.WHITE;
+    private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
@@ -22,7 +22,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return TeamTurn;
+        return teamTurn;
     }
 
     /**
@@ -31,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        TeamTurn = team;
+        teamTurn = team;
     }
 
     /**
@@ -62,7 +62,7 @@ public class ChessGame {
         for (ChessMove move : moves) {
             // Copy Board and check against King in Check
 
-            this.gameBoard = new ChessBoard(originBoard);;
+            this.gameBoard = new ChessBoard(originBoard);
             gameBoard.movePiece(move);
             gameBoard.findKingPositions();
             if (!isInCheck(piece.getTeamColor())) {
@@ -87,7 +87,7 @@ public class ChessGame {
             throw new InvalidMoveException("No piece at location");
         }
         Collection<ChessMove> validMoveList = validMoves(position);
-        if (TeamTurn==piece.getTeamColor() && validMoveList.contains(move)) {
+        if (getTeamTurn()==piece.getTeamColor() && validMoveList.contains(move)) {
             gameBoard.movePiece(move);
             changeTurn();
             return;
@@ -96,7 +96,7 @@ public class ChessGame {
     }
 
     private void changeTurn() {
-        TeamTurn = (TeamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        setTeamTurn((getTeamTurn() == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE);
     }
 
     /**
@@ -129,10 +129,7 @@ public class ChessGame {
         for (ChessPosition position : teamPositions) {
             teamMoves.addAll(validMoves(position));
         }
-        if(isInCheck(teamColor) && teamMoves.isEmpty()) {
-            return true;
-        }
-        return false;
+        return isInCheck(teamColor) && teamMoves.isEmpty();
     }
 
     /**
@@ -149,10 +146,7 @@ public class ChessGame {
             teamMoves.addAll(validMoves(position));
         }
 
-        if(!isInCheck(teamColor) && teamMoves.isEmpty()) {
-            return true;
-        }
-        return false;
+        return !isInCheck(teamColor) && teamMoves.isEmpty();
     }
 
     /**
@@ -182,11 +176,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return TeamTurn == chessGame.TeamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
+        return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(TeamTurn, gameBoard);
+        return Objects.hash(teamTurn, gameBoard);
     }
 }
