@@ -64,6 +64,7 @@ public class ChessGame {
 
             this.gameBoard = new ChessBoard(originBoard);;
             gameBoard.movePiece(move);
+            gameBoard.findKingPositions();
             if (!isInCheck(piece.getTeamColor())) {
                 validMoveList.add(move);
             }
@@ -123,8 +124,12 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingPosition = gameBoard.getKingPosition(teamColor);
-        if(isInCheck(teamColor) && validMoves(kingPosition).isEmpty()) {
+        Collection<ChessMove> teamMoves = new ArrayList<>();
+        Collection<ChessPosition> teamPositions = gameBoard.teamPositions(teamColor);
+        for (ChessPosition position : teamPositions) {
+            teamMoves.addAll(validMoves(position));
+        }
+        if(isInCheck(teamColor) && teamMoves.isEmpty()) {
             return true;
         }
         return false;
